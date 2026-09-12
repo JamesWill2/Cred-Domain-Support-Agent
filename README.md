@@ -330,8 +330,20 @@ Do not use arbitrary tutorial thresholds (0.5, 0.6, 0.7). Calibration was perfor
 `check_loan_application_status(record_id: str) -> dict`
 
 ### Exact Mathematical Formula
-$$\text{recency\_signal} = \frac{\text{days\_since\_created}}{30.0}$$
-$$\text{escalation\_score} = 0.60 \times \mathbb{I}(\text{flagged\_for\_fraud\_review}) + 0.40 \times \text{recency\_signal}$$
+$$
+\text{recency\_signal}
+=
+\frac{\text{days\_since\_created}}{30.0}
+$$
+$$
+\text{escalation\_score}
+=
+0.60 \times
+\mathbb{I}(\text{flagged\_for\_fraud\_review})
++
+0.40 \times
+\text{recency\_signal}
+$$
 
 - **Signal Weights**:
   - $0.60$ (60%): Fraud risk flag (primary institutional risk driver).
