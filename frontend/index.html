@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cred Support Agent</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#f0f4ff; --surface:#ffffff; --sidebar:#1a1f4b; --sidebar-t:#ffffff;
+      --primary:#4f46e5; --primary-h:#4338ca; --accent:#06b6d4;
+      --user-bg:#4f46e5; --user-t:#ffffff; --bot-bg:#f1f5f9; --bot-t:#1e293b;
+      --border:#e2e8f0; --muted:#94a3b8; --danger:#ef4444; --success:#22c55e;
+      --shadow:0 4px 24px rgba(79,70,229,.12); --radius:16px; --radius-sm:8px;
+      font-size:15px;
+    }
+    [data-theme="dark"] {
+      --bg:#0f172a; --surface:#1e293b; --sidebar:#0f172a; --primary:#6366f1;
+      --primary-h:#818cf8; --user-bg:#6366f1; --bot-bg:#334155; --bot-t:#e2e8f0;
+      --border:#334155; --muted:#64748b; --shadow:0 4px 24px rgba(0,0,0,.4);
+    }
+    body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--bot-t); display:flex; height:100vh; overflow:hidden; transition:background .3s,color .3s; }
+    .sidebar { width:270px; min-width:270px; background:var(--sidebar); color:var(--sidebar-t); display:flex; flex-direction:column; padding:0; overflow-y:auto; }
+    .sidebar-header { padding:24px 20px 16px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .logo { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+    .logo-icon { width:38px; height:38px; background:linear-gradient(135deg,#6366f1,#06b6d4); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .logo-text { font-size:1.1rem; font-weight:700; }
+    .logo-sub { font-size:.75rem; color:rgba(255,255,255,.5); margin-top:2px; }
+    .status-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(34,197,94,.15); color:#4ade80; border-radius:20px; padding:4px 10px; font-size:.72rem; font-weight:600; margin-top:10px; }
+    .status-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; animation:pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .sidebar-section-title { font-size:.68rem; font-weight:700; letter-spacing:.08em; color:rgba(255,255,255,.35); text-transform:uppercase; padding:20px 20px 8px; }
+    .cat-btn { display:flex; align-items:center; gap:10px; width:100%; padding:9px 20px; background:none; border:none; color:rgba(255,255,255,.75); cursor:pointer; font-size:.85rem; text-align:left; transition:background .15s,color .15s; }
+    .cat-btn:hover { background:rgba(255,255,255,.06); color:#fff; }
+    .cat-icon { font-size:1rem; width:20px; text-align:center; }
+    .sidebar-footer { margin-top:auto; padding:16px 20px; border-top:1px solid rgba(255,255,255,.08); font-size:.72rem; color:rgba(255,255,255,.3); }
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-shrink:0; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .topbar-title { font-weight:700; font-size:1rem; }
+    .topbar-sub { font-size:.75rem; color:var(--muted); }
+    .topbar-actions { display:flex; gap:8px; align-items:center; }
+    .icon-btn { width:36px; height:36px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--muted); transition:background .15s,color .15s; }
+    .icon-btn:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .stat-chips { display:flex; gap:8px; }
+    .stat-chip { background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 10px; font-size:.72rem; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:4px; }
+    .chat-area { flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:18px; scroll-behavior:smooth; }
+    .welcome { text-align:center; padding:40px 20px; color:var(--muted); animation:fadeIn .5s ease; }
+    .welcome-icon { font-size:3rem; margin-bottom:12px; }
+    .welcome h2 { font-size:1.3rem; color:var(--primary); margin-bottom:6px; }
+    .welcome p { font-size:.875rem; max-width:440px; margin:0 auto; }
+    .suggestions { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:18px; }
+    .suggestion-chip { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-size:.8rem; cursor:pointer; color:var(--primary); transition:background .15s,border-color .15s,transform .1s; font-weight:500; }
+    .suggestion-chip:hover { background:var(--primary); color:#fff; border-color:var(--primary); transform:translateY(-1px); }
+    .msg-row { display:flex; gap:10px; align-items:flex-end; animation:slideIn .25s ease; }
+    .msg-row.user { flex-direction:row-reverse; }
+    @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+    .avatar { width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:700; }
+    .avatar.bot  { background:linear-gradient(135deg,#6366f1,#06b6d4); color:#fff; }
+    .avatar.user { background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; }
+    .bubble { max-width:70%; padding:12px 16px; border-radius:18px; line-height:1.55; font-size:.875rem; }
+    .bubble.bot  { background:var(--bot-bg); color:var(--bot-t); border-bottom-left-radius:4px; }
+    .bubble.user { background:var(--user-bg); color:var(--user-t); border-bottom-right-radius:4px; }
+    .msg-time { font-size:.68rem; color:var(--muted); margin-top:4px; }
+    .msg-row.user .msg-time { text-align:right; }
+    .typing-indicator { display:flex; gap:5px; align-items:center; padding:12px 16px; background:var(--bot-bg); border-radius:18px; border-bottom-left-radius:4px; width:fit-content; }
+    .typing-dot { width:7px; height:7px; border-radius:50%; background:var(--muted); animation:typing 1.2s ease-in-out infinite; }
+    .typing-dot:nth-child(2){animation-delay:.2s} .typing-dot:nth-child(3){animation-delay:.4s}
+    @keyframes typing{0%,80%,100%{transform:scale(1)} 40%{transform:scale(1.4)}}
+    .input-area { background:var(--surface); border-top:1px solid var(--border); padding:16px 24px; flex-shrink:0; }
+    .input-wrap { display:flex; gap:10px; align-items:flex-end; background:var(--bg); border:2px solid var(--border); border-radius:var(--radius); padding:10px 14px; transition:border-color .2s,box-shadow .2s; }
+    .input-wrap:focus-within { border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,.12); }
+    #queryInput { flex:1; border:none; background:none; resize:none; font-family:inherit; font-size:.9rem; color:var(--bot-t); line-height:1.5; max-height:120px; overflow-y:auto; outline:none; }
+    #queryInput::placeholder { color:var(--muted); }
+    .send-btn { width:40px; height:40px; border-radius:12px; background:var(--primary); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background .15s,transform .1s; flex-shrink:0; }
+    .send-btn:hover { background:var(--primary-h); transform:scale(1.05); }
+    .send-btn:active { transform:scale(.96); }
+    .send-btn:disabled { background:var(--muted); cursor:not-allowed; transform:none; }
+    .input-hints { display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:.72rem; color:var(--muted); }
+    .clear-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-size:.72rem; padding:2px 6px; border-radius:4px; transition:color .15s,background .15s; }
+    .clear-btn:hover { color:var(--danger); background:rgba(239,68,68,.08); }
+    .error-banner { background:rgba(239,68,68,.1); color:var(--danger); border:1px solid rgba(239,68,68,.3); border-radius:var(--radius-sm); padding:10px 14px; font-size:.82rem; }
+    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px} ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+    @media(max-width:640px){.sidebar{display:none}}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">💳</div>
+      <div><div class="logo-text">Cred Agent</div><div class="logo-sub">Domain Support System</div></div>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span> Online</div>
+  </div>
+
+  <div class="sidebar-section-title">Quick Topics</div>
+  <button class="cat-btn" onclick="sendSuggestion('What are the KYC document requirements?')"><span class="cat-icon">📄</span> KYC Requirements</button>
+  <button class="cat-btn" onclick="sendSuggestion('What is the interest rate for a personal loan?')"><span class="cat-icon">💰</span> Interest Rates</button>
+  <button class="cat-btn" onclick="sendSuggestion('How is EMI calculated?')"><span class="cat-icon">🧮</span> EMI Calculation</button>
+  <button class="cat-btn" onclick="sendSuggestion('How do I report a fraudulent transaction?')"><span class="cat-icon">🚨</span> Fraud Reporting</button>
+  <button class="cat-btn" onclick="sendSuggestion('What is the minimum credit score for a personal loan?')"><span class="cat-icon">⭐</span> Loan Eligibility</button>
+  <button class="cat-btn" onclick="sendSuggestion('What is the annual credit card fee?')"><span class="cat-icon">💳</span> Credit Card Fees</button>
+  <button class="cat-btn" onclick="sendSuggestion('Is there a prepayment penalty on a home loan?')"><span class="cat-icon">⏫</span> Prepayment Rules</button>
+  <button class="cat-btn" onclick="sendSuggestion('What is the minimum balance for a savings account?')"><span class="cat-icon">🏧</span> Minimum Balance</button>
+  <button class="cat-btn" onclick="sendSuggestion('What factors affect my credit score?')"><span class="cat-icon">📊</span> Credit Score</button>
+  <button class="cat-btn" onclick="sendSuggestion('How do I close my bank account?')"><span class="cat-icon">🔒</span> Account Closure</button>
+  <button class="cat-btn" onclick="sendSuggestion('What types of accounts can an NRI open?')"><span class="cat-icon">🌍</span> NRI Accounts</button>
+  <button class="cat-btn" onclick="sendSuggestion('What are the rules for a joint bank account?')"><span class="cat-icon">👥</span> Joint Accounts</button>
+
+  <div class="sidebar-section-title" style="margin-top:12px">Loan Status Lookup</div>
+  <div style="padding:0 20px 16px;display:flex;gap:8px;align-items:center;">
+    <input id="loanIdInput" placeholder="e.g. LOAN-1010"
+      style="flex:1;padding:7px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;font-size:.8rem;outline:none;" />
+    <button onclick="checkLoanById()"
+      style="padding:7px 12px;border-radius:8px;background:#6366f1;color:#fff;border:none;cursor:pointer;font-size:.8rem;font-weight:600;">Go</button>
+  </div>
+
+  <div class="sidebar-footer">IIT Roorkee × Masai — Capstone<br/>Cred Domain Support Agent v1.0</div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">💬 Chat with Cred Support</div>
+      <div class="topbar-sub" id="topbarSub">Loading system status…</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="stat-chips" id="statChips"></div>
+      <button class="icon-btn" title="Toggle dark mode" onclick="toggleTheme()">🌙</button>
+      <button class="icon-btn" title="Clear chat" onclick="clearChat()">🗑️</button>
+    </div>
+  </div>
+
+  <div class="chat-area" id="chatArea">
+    <div class="welcome" id="welcomeScreen">
+      <div class="welcome-icon">🤖</div>
+      <h2>Hello! I am your Cred Support Agent</h2>
+      <p>Ask me anything about loans, KYC, credit cards, interest rates, fraud disputes, or check the live status of any loan application (LOAN-1001 to LOAN-1045).</p>
+      <div class="suggestions">
+        <span class="suggestion-chip" onclick="sendSuggestion('What are the KYC document requirements?')">📄 KYC Requirements</span>
+        <span class="suggestion-chip" onclick="sendSuggestion('What is the status of LOAN-1001?')">🔍 Loan Status</span>
+        <span class="suggestion-chip" onclick="sendSuggestion('How is EMI calculated?')">🧮 EMI Calculation</span>
+        <span class="suggestion-chip" onclick="sendSuggestion('How do I report a fraudulent transaction?')">🚨 Report Fraud</span>
+        <span class="suggestion-chip" onclick="sendSuggestion('What are the interest rates for home loans?')">💰 Interest Rates</span>
+        <span class="suggestion-chip" onclick="sendSuggestion('What factors affect my credit score?')">⭐ Credit Score</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea id="queryInput" rows="1" placeholder="Ask about loans, KYC, interest rates, fraud…"
+        onkeydown="handleKey(event)" oninput="autoGrow(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">&#10148;</button>
+    </div>
+    <div class="input-hints">
+      <span>Enter to send &nbsp;·&nbsp; Shift+Enter for new line</span>
+      <button class="clear-btn" onclick="clearChat()">Clear chat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let sessionId = 'web_' + Math.random().toString(36).slice(2,9);
+  let dark = false;
+
+  async function boot(){
+    try{
+      const r=await fetch('/health'); const d=await r.json();
+      document.getElementById('topbarSub').textContent=d.total_loan_records+' loan records · '+(d.fixed_chunks_count+d.sentence_chunks_count)+' KB chunks';
+      document.getElementById('statChips').innerHTML='<div class="stat-chip">📁 '+d.total_loan_records+' Loans</div><div class="stat-chip">📚 '+(d.fixed_chunks_count+d.sentence_chunks_count)+' Chunks</div>';
+    }catch(e){document.getElementById('topbarSub').textContent='Server offline — start uvicorn first';}
+  }
+  boot();
+
+  function now(){ return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+  function autoGrow(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+  function handleKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+  function scrollBottom(){ const c=document.getElementById('chatArea'); c.scrollTop=c.scrollHeight; }
+  function hideWelcome(){ const w=document.getElementById('welcomeScreen'); if(w)w.remove(); }
+
+  function appendMessage(text, role){
+    hideWelcome();
+    const area=document.getElementById('chatArea');
+    const row=document.createElement('div'); row.className='msg-row '+role;
+    const av=document.createElement('div'); av.className='avatar '+role; av.textContent=role==='user'?'👤':'🤖';
+    const wrap=document.createElement('div');
+    const bub=document.createElement('div'); bub.className='bubble '+role; bub.textContent=text;
+    const t=document.createElement('div'); t.className='msg-time'; t.textContent=now();
+    wrap.appendChild(bub); wrap.appendChild(t);
+    if(role==='user'){row.appendChild(wrap);row.appendChild(av);}
+    else{row.appendChild(av);row.appendChild(wrap);}
+    area.appendChild(row); scrollBottom();
+  }
+
+  function showTyping(){
+    const area=document.getElementById('chatArea');
+    const row=document.createElement('div'); row.className='msg-row'; row.id='typingRow';
+    const av=document.createElement('div'); av.className='avatar bot'; av.textContent='🤖';
+    const ind=document.createElement('div'); ind.className='typing-indicator';
+    ind.innerHTML='<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+    row.appendChild(av); row.appendChild(ind); area.appendChild(row); scrollBottom();
+  }
+
+  function hideTyping(){ const t=document.getElementById('typingRow'); if(t)t.remove(); }
+
+  async function sendMessage(){
+    const input=document.getElementById('queryInput');
+    const query=input.value.trim(); if(!query)return;
+    input.value=''; input.style.height='auto';
+    document.getElementById('sendBtn').disabled=true;
+    appendMessage(query,'user'); showTyping();
+    try{
+      const resp=await fetch('/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,session_id:sessionId})});
+      const data=await resp.json(); hideTyping();
+      if(data.answer) appendMessage(data.answer,'bot');
+      else if(data.response) appendMessage(data.response,'bot');
+      else if(data.detail){ const m=typeof data.detail==='string'?data.detail:JSON.stringify(data.detail); appendError(m); }
+      else appendMessage(JSON.stringify(data),'bot');
+    }catch(e){ hideTyping(); appendError('Could not reach the server. Make sure uvicorn is running.'); }
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('queryInput').focus();
+  }
+
+  function appendError(msg){
+    hideWelcome();
+    const area=document.getElementById('chatArea');
+    const div=document.createElement('div'); div.className='error-banner'; div.textContent='⚠️ '+msg;
+    area.appendChild(div); scrollBottom();
+  }
+
+  function sendSuggestion(text){ document.getElementById('queryInput').value=text; sendMessage(); }
+
+  function checkLoanById(){
+    const id=document.getElementById('loanIdInput').value.trim().toUpperCase(); if(!id)return;
+    sendSuggestion('What is the status of '+id+'?');
+    document.getElementById('loanIdInput').value='';
+  }
+
+  function clearChat(){
+    const area=document.getElementById('chatArea'); area.innerHTML='';
+    const w=document.createElement('div'); w.id='welcomeScreen'; w.className='welcome';
+    w.innerHTML='<div class="welcome-icon">🤖</div><h2>Hello! I am your Cred Support Agent</h2><p>Ask me anything about loans, KYC, credit cards, interest rates, fraud disputes, or check the live status of any loan application (LOAN-1001 to LOAN-1045).</p><div class="suggestions"><span class="suggestion-chip" onclick="sendSuggestion(\'What are the KYC document requirements?\')">📄 KYC Requirements</span><span class="suggestion-chip" onclick="sendSuggestion(\'What is the status of LOAN-1001?\')">🔍 Loan Status</span><span class="suggestion-chip" onclick="sendSuggestion(\'How is EMI calculated?\')">🧮 EMI Calculation</span><span class="suggestion-chip" onclick="sendSuggestion(\'How do I report a fraudulent transaction?\')">🚨 Report Fraud</span><span class="suggestion-chip" onclick="sendSuggestion(\'What are the interest rates for home loans?\')">💰 Interest Rates</span><span class="suggestion-chip" onclick="sendSuggestion(\'What factors affect my credit score?\')">⭐ Credit Score</span></div>';
+    area.appendChild(w);
+    sessionId='web_'+Math.random().toString(36).slice(2,9);
+  }
+
+  function toggleTheme(){
+    dark=!dark;
+    document.body.setAttribute('data-theme',dark?'dark':'');
+    document.querySelector('.icon-btn[title="Toggle dark mode"]').textContent=dark?'☀️':'🌙';
+  }
+</script>
+</body>
+</html>

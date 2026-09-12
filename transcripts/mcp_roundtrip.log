@@ -1,0 +1,28 @@
+=================================================================
+ FASTMCP CLIENT ROUND-TRIP DEMONSTRATION
+ Connecting to Cred-Lending-Operations-MCP Server...
+=================================================================
+Connected successfully. Discovered MCP Tools: ['check_loan_application_status']
+
+--> [MCP Call] Invoking 'check_loan_application_status' with record_id='LOAN-1001'
+<-- [MCP Standard Response Received]:
+    Raw Text Content:       {"found":true,"record_id":"LOAN-1001","category":"Personal Loan","status":"Submitted","loan_amount_inr":627000,"days_since_created":7,"flagged_for_fraud_review":false,"escalation_score":0.0933,"escalation_threshold":0.65,"escalation_required":false,"message":"Loan application LOAN-1001 (Personal Loan) is currently 'Submitted' with principal amount INR 627,000. Escalation score is 0.0933 (NORMAL: Within acceptable thresholds)."}
+    Structured Content:     {'found': True, 'record_id': 'LOAN-1001', 'category': 'Personal Loan', 'status': 'Submitted', 'loan_amount_inr': 627000, 'days_since_created': 7, 'flagged_for_fraud_review': False, 'escalation_score': 0.0933, 'escalation_threshold': 0.65, 'escalation_required': False, 'message': "Loan application LOAN-1001 (Personal Loan) is currently 'Submitted' with principal amount INR 627,000. Escalation score is 0.0933 (NORMAL: Within acceptable thresholds)."}
+    Is Error:               False
+
+--> [MCP Call] Invoking 'check_loan_application_status' with record_id='LOAN-1002'
+<-- [MCP Standard Response Received]:
+    Raw Text Content:       {"found":true,"record_id":"LOAN-1002","category":"Personal Loan","status":"Disbursed","loan_amount_inr":232000,"days_since_created":18,"flagged_for_fraud_review":false,"escalation_score":0.24,"escalation_threshold":0.65,"escalation_required":false,"message":"Loan application LOAN-1002 (Personal Loan) is currently 'Disbursed' with principal amount INR 232,000. Escalation score is 0.2400 (NORMAL: Within acceptable thresholds)."}
+    Structured Content:     {'found': True, 'record_id': 'LOAN-1002', 'category': 'Personal Loan', 'status': 'Disbursed', 'loan_amount_inr': 232000, 'days_since_created': 18, 'flagged_for_fraud_review': False, 'escalation_score': 0.24, 'escalation_threshold': 0.65, 'escalation_required': False, 'message': "Loan application LOAN-1002 (Personal Loan) is currently 'Disbursed' with principal amount INR 232,000. Escalation score is 0.2400 (NORMAL: Within acceptable thresholds)."}
+    Is Error:               False
+
+--> [MCP Call] Invoking 'check_loan_application_status' with record_id='LOAN-1004'
+<-- [MCP Standard Response Received]:
+    Raw Text Content:       {"found":true,"record_id":"LOAN-1004","category":"Personal Loan","status":"Disbursed","loan_amount_inr":467000,"days_since_created":22,"flagged_for_fraud_review":false,"escalation_score":0.2933,"escalation_threshold":0.65,"escalation_required":false,"message":"Loan application LOAN-1004 (Personal Loan) is currently 'Disbursed' with principal amount INR 467,000. Escalation score is 0.2933 (NORMAL: Within acceptable thresholds)."}
+    Structured Content:     {'found': True, 'record_id': 'LOAN-1004', 'category': 'Personal Loan', 'status': 'Disbursed', 'loan_amount_inr': 467000, 'days_since_created': 22, 'flagged_for_fraud_review': False, 'escalation_score': 0.2933, 'escalation_threshold': 0.65, 'escalation_required': False, 'message': "Loan application LOAN-1004 (Personal Loan) is currently 'Disbursed' with principal amount INR 467,000. Escalation score is 0.2933 (NORMAL: Within acceptable thresholds)."}
+    Is Error:               False
+
+=================================================================
+Successfully completed 3 MCP tool calls via protocol round-trip.
+=================================================================
+

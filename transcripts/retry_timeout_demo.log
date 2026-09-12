@@ -1,0 +1,31 @@
+=========================================================================
+ EXPONENTIAL BACKOFF RETRY DEMONSTRATION
+ Configuration: max_attempts=3, initial_interval=0.05s, max_interval=0.5s, jitter=True
+=========================================================================
+Initiating call to transient service (programmed to fail calls 1 and 2)...
+  [RETRY ATTEMPT 1/3] Caught transient error: 'Simulated Transient Error: HTTP 503 Service Unavailable (Attempt 1)'. Backing off for 0.0697s before retry...
+  [RETRY ATTEMPT 2/3] Caught transient error: 'Simulated Transient Error: HTTP 503 Service Unavailable (Attempt 2)'. Backing off for 0.1117s before retry...
+
+Result: Service successfully responded on attempt 3 after 2 prior transient failures.
+Total Attempts Made: 3
+Total Duration (including backoff delays): 0.1826s
+=========================================================================
+ RETRY RECOVERY DEMONSTRATION SUCCESSFUL [PASS]
+=========================================================================
+
+=========================================================================
+ TIMEOUT RESILIENCE DEMONSTRATIONS
+=========================================================================
+
+--- 1. Testing Per-Node Timeout (Simulated 1.5s delay with 0.3s timeout) ---
+  [NODE TIMEOUT CAUGHT] in 1.5012s: Node 'slow_external_bureau_lookup' execution exceeded maximum timeout of 0.30s.
+  Clean error produced without hanging! [PASS]
+
+--- 2. Testing Global Graph Timeout (Simulated multi-node delay with 0.4s global limit) ---
+  [GLOBAL TIMEOUT CAUGHT] in 0.7522s: Global Graph Execution cancelled: exceeded total graph deadline of 0.40s.
+  Global execution cleanly cancelled on total-time overrun! [PASS]
+
+=========================================================================
+ TIMEOUT RESILIENCE DEMONSTRATION SUCCESSFUL [PASS]
+=========================================================================
+

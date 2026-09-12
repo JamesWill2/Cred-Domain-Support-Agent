@@ -1,0 +1,37 @@
+=================================================================
+ CRED DOMAIN SUPPORT AGENT: MULTI-TURN MEMORY DEMONSTRATION
+ Session ID: transcript-session-turn12
+=================================================================
+
+--- TURN 1: User explicitly mentions loan ID LOAN-1001 ---
+User Prompt: 'Please check the status of my loan LOAN-1001'
+Agent Response: {
+  "response": "Loan application LOAN-1001 (Personal Loan) is currently 'Submitted' with principal amount INR 627,000. Escalation score is 0.0933 (NORMAL: Within acceptable thresholds).",
+  "intent": "loan_status",
+  "sources": [
+    "LOAN-1001"
+  ],
+  "tool_used": "check_loan_application_status",
+  "escalation_score": 0.0933,
+  "grounded": true,
+  "refusal_reason": null,
+  "trace_id": "trace-109aee5b4bf3"
+}
+Persisted Memory Context: {'last_loan_id': 'LOAN-1001'}
+
+--- TURN 2: User asks follow-up referring to 'that loan' ---
+User Prompt: 'What is the escalation score of that loan?'
+Agent Response: {
+  "response": "Loan application LOAN-1001 (Personal Loan) is currently 'Submitted' with principal amount INR 627,000. Escalation score is 0.0933 (NORMAL: Within acceptable thresholds).",
+  "intent": "loan_status",
+  "sources": [
+    "LOAN-1001"
+  ],
+  "tool_used": "check_loan_application_status",
+  "escalation_score": 0.0933,
+  "grounded": true,
+  "refusal_reason": null,
+  "trace_id": "trace-66bc06b2d63a"
+}
+Coreference Resolved Successfully to: ['LOAN-1001']
+=================================================================

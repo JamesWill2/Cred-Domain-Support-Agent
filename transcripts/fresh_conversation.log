@@ -1,0 +1,20 @@
+=================================================================
+ CRED DOMAIN SUPPORT AGENT: FRESH CONVERSATION RESET DEMONSTRATION
+ Session ID: transcript-session-fresh-new (Brand New Conversation)
+=================================================================
+
+Initial Session Memory: {'messages': [], 'context': {}}
+User Prompt: 'What is the status of that loan?'
+Agent Response: {
+  "response": "You referred to a previous loan application, but no active loan ID was found in our current conversation history. Please provide your Loan Application ID (e.g., LOAN-1001).",
+  "intent": "loan_status",
+  "sources": [],
+  "tool_used": null,
+  "escalation_score": null,
+  "grounded": true,
+  "refusal_reason": null,
+  "trace_id": "trace-99016d63feb9"
+}
+Verification: Because session is fresh with no prior state,
+the agent correctly identifies missing loan ID and prompts the user.
+=================================================================

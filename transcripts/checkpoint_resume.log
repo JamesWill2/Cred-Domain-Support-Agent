@@ -1,0 +1,23 @@
+=========================================================================
+ SQLITE CHECKPOINT & RESUMPTION DEMONSTRATION
+ Database: D:\IIT Rookee x Masai Capstone Project\checkpoints.sqlite | Thread ID: transcript-thread-resilience-demo
+=========================================================================
+
+--- PHASE 1: Launching initial run (Interrupt set before 'tracked_tool_node') ---
+Phase 1 Execution Halted at Interrupt. Nodes executed: ['tracked_guardrail_node', 'tracked_router_node']
+Phase 1 State Step Counter: 2
+State stored in checkpoints.sqlite under thread_id: 'transcript-thread-resilience-demo'
+
+--- PHASE 2: Resuming execution on SAME thread_id (None input payload) ---
+Phase 2 Execution Completed. Cumulative Nodes executed: ['tracked_guardrail_node', 'tracked_router_node', 'tracked_tool_node', 'tracked_synth_node']
+Final State Step Counter: 4
+Final Validated Output: {'response': "Loan application LOAN-1001 (Personal Loan) is currently 'Submitted' with principal amount INR 627,000. Escalation score is 0.0933 (NORMAL: Within acceptable thresholds).", 'intent': 'loan_status', 'sources': ['LOAN-1001'], 'tool_used': 'check_loan_application_status', 'escalation_score': 0.0933, 'grounded': True, 'refusal_reason': None, 'trace_id': 'trace-ckpt-1001'}
+
+--- NODE EXECUTION COUNT AUDIT ---
+  * Node 1 (tracked_guardrail_node) executions: 1 [Must be 1]
+  * Node 2 (tracked_router_node) executions:    1 [Must be 1]
+  * Node 3 (tracked_tool_node) executions:      1 [Must be 1]
+  * Node 4 (tracked_synth_node) executions:     1 [Must be 1]
+=========================================================================
+ CHECKPOINT VERIFICATION SUCCESSFUL: ZERO RE-EXECUTION OF PRIOR NODES [PASS]
+=========================================================================
