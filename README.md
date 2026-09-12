@@ -330,11 +330,13 @@ Do not use arbitrary tutorial thresholds (0.5, 0.6, 0.7). Calibration was perfor
 `check_loan_application_status(record_id: str) -> dict`
 
 ### Exact Mathematical Formula
+
 $$
 \text{recency\_signal}
 =
 \frac{\text{days\_since\_created}}{30.0}
 $$
+
 $$
 \text{escalation\_score}
 =
