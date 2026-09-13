@@ -131,9 +131,15 @@ flowchart TD
 ### 3.3 Loan Status Tool & Escalation Math (`agent/tools.py`)
 - **Tool Signature**: `check_loan_application_status(record_id: str) -> dict`.
 - **Escalation Score Formula**:
-  $$\text{escalation\_score} = 0.60 \times \text{flagged\_for\_fraud\_review} + 0.40 \times \left(\frac{\text{days\_since\_created}}{30}\right)$$
-  - Returns continuous float in $[0.0, 1.0]$.
-  - Escalation threshold $\tau = 0.65$ (calibrated to the 80th percentile of the risk distribution).
+`recency_signal = days_since_created / 30.0`
+
+`escalation_score = 0.60 × fraud_flag + 0.40 × recency_signal`
+
+Where:
+- `fraud_flag` = 1 if the application is flagged for fraud review, otherwise 0.
+- `recency_signal` = `days_since_created / 30.0`.
+- `escalation_score` is a continuous value between `0.0` and `1.0`.
+- Escalation threshold: `τ = 0.65`.
 
 ### 3.4 LangGraph State & Node Architecture (`agent/graph.py`)
 - State schema holds: `session_id`, `trace_id`, `raw_input`, `sanitized_input`, `intent`, `retrieved_chunks`, `loan_record`, `escalation_score`, `final_response`, `guardrail_flags`, `grounded`.
