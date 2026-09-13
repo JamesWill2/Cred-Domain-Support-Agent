@@ -3,7 +3,7 @@
 This document maps all 32 acceptance criteria and requirements from the official Cred Domain Support Agent capstone brief to their corresponding implementation files, automated pytest tests, and demonstration scripts/transcripts.
 
 | ID | Requirement Description | Implementation File | Demonstration / Script |
-|---|---|---|---|---|
+|---|---|---|---|
 | **REQ-01** | Deterministic LOAN_APPLICATIONS dataset (≥40 records, 5 categories, 5 statuses, seeded) | `dataset/dataset.py` | `scripts/run_all_demos.py` |
 | **REQ-02** | Structural thresholds: each category ≥3, each status ≥1, fraud rate 10%–30% | `dataset/dataset.py` | `scripts/run_all_demos.py` |
 | **REQ-03** | Original Knowledge Base with ≥12 documents (2–5 sentences) covering all required topics | `knowledge_base/docs/*.md`, `knowledge_base/loader.py` | `knowledge_base/loader.py` |
