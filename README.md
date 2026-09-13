@@ -331,21 +331,20 @@ Do not use arbitrary tutorial thresholds (0.5, 0.6, 0.7). Calibration was perfor
 
 ### Exact Mathematical Formula
 
-$$
-\text{recency\_signal}
-=
-\frac{\text{days\_since\_created}}{30.0}
-$$
+**Recency Signal:**
 
-$$
-\text{escalation\_score}
-=
-0.60 \times
-\mathbb{I}(\text{flagged\_for\_fraud\_review})
-+
-0.40 \times
-\text{recency\_signal}
-$$
+`recency_signal = days_since_created / 30.0`
+
+**Escalation Score:**
+
+`escalation_score = 0.60 × fraud_flag + 0.40 × recency_signal`
+
+Where:
+
+- `fraud_flag` = 1 if the application is flagged for fraud review, otherwise 0.
+- `recency_signal` = `days_since_created / 30.0`.
+- `escalation_score` is a continuous value between `0.0` and `1.0`.
+- Escalation threshold: `τ = 0.65`.
 
 - **Signal Weights**:
   - $0.60$ (60%): Fraud risk flag (primary institutional risk driver).
